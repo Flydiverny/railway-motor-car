@@ -17,7 +17,7 @@ data.home_return = data.name.."-home-return"
 data.keep_schedule = data.name.."-keep-schedule"
 data.keep_temporary = data.name.."-keep-temporary"
 
-data.root = "__railway-motor-car__"
+data.root = "__railway-motor-car-fork__"
 
 function data.is_a_motorcar(name)
   return string.find(name, data.motorcar_prefix, 1, true)
