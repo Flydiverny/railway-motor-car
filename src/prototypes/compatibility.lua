@@ -1,3 +1,5 @@
+local flib = require "__flib__.data-util"
+
 local utils = require "utils"
 
 local function table_contains(table, value)
@@ -7,6 +9,13 @@ local function table_contains(table, value)
     end
   end
   return false
+end
+
+function merge_table(table1, table2)
+	for _, value in ipairs(table2) do
+		table1[#table1+1] = value
+	end
+	return table1
 end
 
 -- check for modded locomotives and create equipment & entity for them
@@ -32,7 +41,7 @@ for prototype_name, prototype in pairs(data.raw["locomotive"]) do
 
       local name = shared.motorcar_prefix .. prototype_name
       local motorcar = utils.create_entity(prototype_name, name, true)
-      motorcar.localised_name = {"", {"entity-name." .. shared.base_motorcar}, " (", {"entity-name." .. prototype_name}, ")"}
+      motorcar.localised_name = merge_table(merge_table({"", {"entity-name." .. shared.base_motorcar}, " ("}, {prototype_item.localised_name or {"entity-name." .. prototype_name}}), {")"})
       data:extend {motorcar}
 
       local equipment = utils.create_equipment(name, true)
@@ -41,10 +50,16 @@ for prototype_name, prototype in pairs(data.raw["locomotive"]) do
       local item = utils.create_item(name)
       item.localised_name = motorcar.localised_name
       item.localised_description = {"item-description." .. shared.base_motorcar}
-      -- copy icon of the original b/c they are dynamic
-      item.icon = prototype_item.icon
-      item.icon_size = prototype_item.icon_size
-      item.icons = prototype_item.icons
+      local motorcar_icon = {
+        {
+          icon = shared.root .. "/graphics/equipment/motorcar_overlay.png",
+          icon_size = 64,
+          tint = {r=1, g=1, b=1, a=1}
+        }
+      }
+      -- Generate icons with overlay
+      item.icons = flib.create_icons(prototype, motorcar_icon) or motorcar_icon
+      item.icon_size = nil
 
       local recipe = {
         type = "recipe",
