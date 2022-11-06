@@ -262,7 +262,7 @@ script.on_event(shared.home, function(event)
     local had_matches = false
 
     -- Try to find the home station for the players surface (do not use "=" b/c icons are saved like this: "[item=iron-plate] Smelting")
-    for surface, station in string.gmatch(home_config, "(%w+):([^,]+)") do
+      for surface, station in string.gmatch(home_config, "([^:]+):([^,]+),?") do
       had_matches = true -- if we iterated at least once, then we had a fancy config.
       if string.lower(surface) == string.lower(player.surface.name) then
         home_station = station
@@ -376,7 +376,7 @@ script.on_nth_tick(30, function(event)
     then
       -- drain energy: half of the input flow limit (per tick) is the drain -> subtract it
       ---@type LuaEquipment
-      local equipment = global.data[player.index].equipment;
+      local equipment = global.data[player.index].equipment
       if equipment.energy > 0 then
         equipment.energy = math.max(equipment.energy - equipment.prototype.energy_source.input_flow_limit * 30 / 2, 0)
       end
